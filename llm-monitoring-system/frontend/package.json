@@ -1,0 +1,38 @@
+{
+  "name": "llm-monitoring-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.8.0",
+    "axios": "^1.3.0",
+    "recharts": "^2.5.0",
+    "@mui/material": "^5.11.0",
+    "@mui/icons-material": "^5.11.0",
+    "@emotion/react": "^11.10.0",
+    "@emotion/styled": "^11.10.0"
+  },
+  "scripts": {
+    "start": "PORT=55914 HOST=0.0.0.0 DANGEROUSLY_DISABLE_HOST_CHECK=true react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "react-scripts": "^5.0.1"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "proxy": "http://localhost:54943"
+}
