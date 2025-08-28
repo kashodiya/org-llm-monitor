@@ -11,9 +11,11 @@
 
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { apiService } from '../services/api';
 
 const Monitoring = () => {
+  const navigate = useNavigate();
   const [websites, setWebsites] = useState([]);
   const [monitoringStatus, setMonitoringStatus] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -80,7 +82,8 @@ const Monitoring = () => {
       // Refresh status
       await loadData();
       
-      alert('Monitoring started successfully! Check the Results page for progress.');
+      // Navigate to Results tab instead of showing alert
+      navigate('/results');
       
     } catch (err) {
       console.error('Error starting monitoring:', err);

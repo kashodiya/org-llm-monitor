@@ -24,10 +24,25 @@ const Results = () => {
   const [selectedResult, setSelectedResult] = useState(null);
   const [filterMisrepresentations, setFilterMisrepresentations] = useState(false);
   const [sortBy, setSortBy] = useState('date');
+  const [autoRefresh, setAutoRefresh] = useState(false);
 
   useEffect(() => {
     loadResults();
   }, []);
+
+  useEffect(() => {
+    let interval;
+    if (autoRefresh) {
+      interval = setInterval(() => {
+        loadResults();
+      }, 5000); // Refresh every 5 seconds
+    }
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [autoRefresh]);
 
   const loadResults = async () => {
     try {
@@ -108,9 +123,20 @@ const Results = () => {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
         <h1>Analysis Results</h1>
-        <button className="btn btn-primary" onClick={loadResults}>
-          Refresh Results
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+          <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+            <input
+              type="checkbox"
+              checked={autoRefresh}
+              onChange={(e) => setAutoRefresh(e.target.checked)}
+              style={{ marginRight: '8px' }}
+            />
+            Auto Refresh (5s)
+          </label>
+          <button className="btn btn-primary" onClick={loadResults}>
+            Refresh Results
+          </button>
+        </div>
       </div>
 
       {error && (
