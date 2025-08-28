@@ -357,42 +357,72 @@ const Results = () => {
 
       {/* Result Details Modal */}
       {selectedResult && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0,0,0,0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000,
-          padding: '20px'
-        }}>
-          <div style={{
-            backgroundColor: 'white',
-            borderRadius: '8px',
-            padding: '30px',
-            maxWidth: '800px',
-            maxHeight: '80vh',
-            overflow: 'auto',
-            width: '100%'
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <div 
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            padding: '20px'
+          }}
+          onClick={closeResultDetails} // Click outside to close
+        >
+          <div 
+            style={{
+              backgroundColor: 'white',
+              borderRadius: '8px',
+              padding: '30px',
+              maxWidth: '800px',
+              maxHeight: '80vh',
+              overflow: 'auto',
+              width: '100%',
+              position: 'relative'
+            }}
+            onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside modal
+          >
+            {/* Fixed close button */}
+            <button
+              onClick={closeResultDetails}
+              style={{
+                position: 'sticky',
+                top: '10px',
+                right: '10px',
+                float: 'right',
+                background: '#f8f9fa',
+                border: '1px solid #dee2e6',
+                borderRadius: '50%',
+                width: '35px',
+                height: '35px',
+                fontSize: '18px',
+                cursor: 'pointer',
+                color: '#666',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 10,
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                marginBottom: '10px'
+              }}
+              onMouseOver={(e) => {
+                e.target.style.backgroundColor = '#e9ecef';
+                e.target.style.color = '#000';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.backgroundColor = '#f8f9fa';
+                e.target.style.color = '#666';
+              }}
+            >
+              ×
+            </button>
+            
+            <div style={{ clear: 'both', marginBottom: '20px' }}>
               <h2>Analysis Details</h2>
-              <button
-                onClick={closeResultDetails}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  fontSize: '24px',
-                  cursor: 'pointer',
-                  color: '#666'
-                }}
-              >
-                ×
-              </button>
             </div>
 
             <div style={{ marginBottom: '20px' }}>
@@ -462,18 +492,170 @@ const Results = () => {
             {selectedResult.analysis_details && (
               <div style={{ marginBottom: '20px' }}>
                 <h3>Detailed Analysis</h3>
-                <div style={{ 
-                  padding: '15px', 
-                  backgroundColor: '#f8f9fa', 
-                  borderRadius: '4px',
-                  maxHeight: '200px',
-                  overflow: 'auto',
-                  fontSize: '0.9em'
-                }}>
-                  <pre style={{ whiteSpace: 'pre-wrap', margin: 0 }}>
-                    {selectedResult.analysis_details}
-                  </pre>
-                </div>
+                {(() => {
+                  try {
+                    const analysisData = JSON.parse(selectedResult.analysis_details);
+                    return (
+                      <div style={{ 
+                        padding: '20px', 
+                        backgroundColor: '#f8f9fa', 
+                        borderRadius: '8px',
+                        border: '1px solid #e9ecef'
+                      }}>
+                        {/* Analysis Summary */}
+                        {analysisData.analysis_summary && (
+                          <div style={{ marginBottom: '20px' }}>
+                            <h4 style={{ color: '#495057', marginBottom: '10px', fontSize: '1.1em' }}>
+                              📋 Analysis Summary
+                            </h4>
+                            <div style={{ 
+                              padding: '12px', 
+                              backgroundColor: 'white', 
+                              borderRadius: '4px',
+                              border: '1px solid #dee2e6',
+                              lineHeight: '1.5'
+                            }}>
+                              {analysisData.analysis_summary}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Confidence Score */}
+                        {analysisData.confidence !== undefined && (
+                          <div style={{ marginBottom: '20px' }}>
+                            <h4 style={{ color: '#495057', marginBottom: '10px', fontSize: '1.1em' }}>
+                              🎯 Analysis Confidence
+                            </h4>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                              <div style={{
+                                width: '120px',
+                                height: '20px',
+                                backgroundColor: '#e9ecef',
+                                borderRadius: '10px',
+                                overflow: 'hidden'
+                              }}>
+                                <div style={{
+                                  width: `${analysisData.confidence * 100}%`,
+                                  height: '100%',
+                                  backgroundColor: analysisData.confidence >= 0.8 ? '#28a745' : 
+                                                 analysisData.confidence >= 0.6 ? '#ffc107' : '#dc3545',
+                                  transition: 'width 0.3s ease'
+                                }} />
+                              </div>
+                              <span style={{ 
+                                fontWeight: 'bold',
+                                color: analysisData.confidence >= 0.8 ? '#28a745' : 
+                                       analysisData.confidence >= 0.6 ? '#ffc107' : '#dc3545'
+                              }}>
+                                {(analysisData.confidence * 100).toFixed(1)}%
+                              </span>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Specific Issues */}
+                        {analysisData.specific_issues && analysisData.specific_issues.length > 0 && (
+                          <div style={{ marginBottom: '20px' }}>
+                            <h4 style={{ color: '#495057', marginBottom: '10px', fontSize: '1.1em' }}>
+                              ⚠️ Specific Issues Found
+                            </h4>
+                            <div style={{ 
+                              padding: '12px', 
+                              backgroundColor: 'white', 
+                              borderRadius: '4px',
+                              border: '1px solid #dee2e6'
+                            }}>
+                              <ul style={{ margin: 0, paddingLeft: '20px' }}>
+                                {analysisData.specific_issues.map((issue, index) => (
+                                  <li key={index} style={{ 
+                                    marginBottom: '8px', 
+                                    lineHeight: '1.4',
+                                    color: '#dc3545'
+                                  }}>
+                                    {issue}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Raw Analysis (Collapsible) */}
+                        {analysisData.raw_analysis && (
+                          <div style={{ marginBottom: '10px' }}>
+                            <details style={{ cursor: 'pointer' }}>
+                              <summary style={{ 
+                                color: '#495057', 
+                                fontSize: '1.1em',
+                                fontWeight: 'bold',
+                                marginBottom: '10px',
+                                padding: '8px',
+                                backgroundColor: 'white',
+                                borderRadius: '4px',
+                                border: '1px solid #dee2e6'
+                              }}>
+                                🔍 Full Analysis Details
+                              </summary>
+                              <div style={{ 
+                                padding: '15px', 
+                                backgroundColor: 'white', 
+                                borderRadius: '4px',
+                                border: '1px solid #dee2e6',
+                                marginTop: '10px',
+                                maxHeight: '300px',
+                                overflow: 'auto'
+                              }}>
+                                <pre style={{ 
+                                  whiteSpace: 'pre-wrap', 
+                                  margin: 0,
+                                  fontSize: '0.9em',
+                                  lineHeight: '1.4',
+                                  color: '#495057'
+                                }}>
+                                  {analysisData.raw_analysis}
+                                </pre>
+                              </div>
+                            </details>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  } catch (error) {
+                    // Fallback for malformed JSON
+                    return (
+                      <div style={{ 
+                        padding: '15px', 
+                        backgroundColor: '#f8f9fa', 
+                        borderRadius: '4px',
+                        border: '1px solid #e9ecef'
+                      }}>
+                        <div style={{ 
+                          padding: '10px', 
+                          backgroundColor: '#fff3cd', 
+                          borderRadius: '4px',
+                          border: '1px solid #ffeaa7',
+                          marginBottom: '15px',
+                          color: '#856404'
+                        }}>
+                          ⚠️ Unable to parse analysis details. Showing raw data:
+                        </div>
+                        <pre style={{ 
+                          whiteSpace: 'pre-wrap', 
+                          margin: 0,
+                          fontSize: '0.9em',
+                          maxHeight: '200px',
+                          overflow: 'auto',
+                          padding: '10px',
+                          backgroundColor: 'white',
+                          borderRadius: '4px',
+                          border: '1px solid #dee2e6'
+                        }}>
+                          {selectedResult.analysis_details}
+                        </pre>
+                      </div>
+                    );
+                  }
+                })()}
               </div>
             )}
 

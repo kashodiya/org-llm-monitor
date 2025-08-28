@@ -26,8 +26,8 @@ This system continuously monitors how LLM services like ChatGPT represent your o
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   React Frontend│    │   FastAPI       │    │   SQLite        │
-│   (Port 55914)  │◄──►│   Backend       │◄──►│   Database      │
-│                 │    │   (Port 54943)  │    │                 │
+│   (Port 50014)  │◄──►│   Backend       │◄──►│   Database      │
+│                 │    │   (Port 51183)  │    │                 │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
                               │
                               ▼
@@ -118,8 +118,8 @@ DATABASE_PATH=./monitoring.db
 
 # Server Configuration
 API_HOST=0.0.0.0
-API_PORT=54943
-FRONTEND_PORT=55914
+API_PORT=51183
+FRONTEND_PORT=50014
 
 # Monitoring Configuration
 SCRAPING_INTERVAL=3600  # seconds
@@ -144,14 +144,16 @@ This system uses LiteLLM proxy to access various LLM services. Configure your pr
    ```bash
    python main.py
    ```
-   The API will be available at `http://localhost:54943`
+   The API will be available at `http://localhost:51183`
 
 2. **Start Frontend Development Server**
    ```bash
    cd frontend
    npm start
    ```
-   The web interface will be available at `http://localhost:55914`
+   The web interface will be available at `http://localhost:50014`
+   
+   **Note**: The frontend is configured to bind to all network interfaces (0.0.0.0) to allow external access. This enables access from remote machines using the server's IP address.
 
 ### Web Interface
 
@@ -280,9 +282,9 @@ For development, you can run both servers with auto-reload:
 
 ```bash
 # Backend with auto-reload
-uvicorn src.api.main:app --reload --host 0.0.0.0 --port 54943
+uvicorn src.api.main:app --reload --host 0.0.0.0 --port 51183
 
-# Frontend with hot reload
+# Frontend with hot reload (binds to all interfaces)
 cd frontend
 npm start
 ```
@@ -307,7 +309,7 @@ npm start
 3. **Run with Production Server**
    ```bash
    # Using gunicorn
-   gunicorn src.api.main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:54943
+   gunicorn src.api.main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:51183
    ```
 
 ### Docker Deployment
@@ -321,7 +323,7 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 COPY . .
-EXPOSE 54943
+EXPOSE 51183
 
 CMD ["python", "main.py"]
 ```
