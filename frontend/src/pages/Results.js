@@ -25,6 +25,7 @@ const Results = () => {
   const [filterMisrepresentations, setFilterMisrepresentations] = useState(false);
   const [sortBy, setSortBy] = useState('date');
   const [autoRefresh, setAutoRefresh] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     loadResults();
@@ -34,7 +35,7 @@ const Results = () => {
     let interval;
     if (autoRefresh) {
       interval = setInterval(() => {
-        loadResults();
+        refreshResults();
       }, 5000); // Refresh every 5 seconds
     }
     return () => {
@@ -61,6 +62,26 @@ const Results = () => {
       setError('Failed to load analysis results. Please check if the API server is running.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const refreshResults = async () => {
+    try {
+      setRefreshing(true);
+      setError(null);
+      
+      const [resultsResponse, summaryResponse] = await Promise.all([
+        apiService.getAnalysisResults(100),
+        apiService.getMisrepresentationsSummary()
+      ]);
+      
+      setAnalysisResults(resultsResponse.data);
+      setSummary(summaryResponse.data);
+    } catch (err) {
+      console.error('Error refreshing results:', err);
+      setError('Failed to refresh analysis results. Please check if the API server is running.');
+    } finally {
+      setRefreshing(false);
     }
   };
 
@@ -131,10 +152,14 @@ const Results = () => {
               onChange={(e) => setAutoRefresh(e.target.checked)}
               style={{ marginRight: '8px' }}
             />
-            Auto Refresh (5s)
+            Auto Refresh (5s) {autoRefresh && refreshing && '🔄'}
           </label>
-          <button className="btn btn-primary" onClick={loadResults}>
-            Refresh Results
+          <button 
+            className="btn btn-primary" 
+            onClick={refreshResults}
+            disabled={refreshing}
+          >
+            {refreshing ? '🔄 Refreshing...' : 'Refresh Results'}
           </button>
         </div>
       </div>
