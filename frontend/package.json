@@ -14,7 +14,7 @@
     "@emotion/styled": "^11.10.0"
   },
   "scripts": {
-    "start": "PORT=55914 HOST=0.0.0.0 DANGEROUSLY_DISABLE_HOST_CHECK=true react-scripts start",
+    "start": "PORT=55447 HOST=0.0.0.0 DANGEROUSLY_DISABLE_HOST_CHECK=true react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -34,5 +34,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:54943"
+  "proxy": "http://localhost:51183"
 }

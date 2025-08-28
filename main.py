@@ -29,7 +29,7 @@ def main():
     
     # Configuration
     host = os.getenv("HOST", "0.0.0.0")
-    port = int(os.getenv("PORT", 54943))
+    port = int(os.getenv("PORT", 51183))
     debug = os.getenv("DEBUG", "True").lower() == "true"
     
     print(f"🌐 Server Configuration:")
