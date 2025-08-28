@@ -71,6 +71,8 @@ kill %2
 ```
 
 ### Restart Services
+
+#### Linux/macOS
 ```bash
 # Restart backend
 cd /workspace/org-llm-monitor
@@ -79,6 +81,17 @@ PORT=51183 python3 main.py > backend.log 2>&1 &
 # Restart frontend
 cd /workspace/org-llm-monitor/frontend
 npm start > frontend.log 2>&1 &
+```
+
+#### Windows
+```cmd
+# Restart backend
+cd /workspace/org-llm-monitor
+set PORT=51183 && python main.py
+
+# Restart frontend
+cd /workspace/org-llm-monitor/frontend
+npm run startw
 ```
 
 ### View Logs
@@ -100,16 +113,33 @@ tail -f /workspace/org-llm-monitor/frontend/frontend.log
 
 ### Frontend Configuration
 - Host: 0.0.0.0 (accessible from any interface)
-- Port: 55447
+- Port: 55447 (Linux/macOS) / 55914 (Windows)
 - Proxy: http://localhost:51183 (backend API)
 - Hot Reload: Enabled
+- Scripts:
+  - `npm start` - Linux/macOS compatible start command
+  - `npm run startw` - Windows compatible start command
 
 ## 🎯 Next Steps
 
-1. **Access the Frontend**: Open http://localhost:55447 in your browser
+1. **Access the Frontend**: 
+   - Linux/macOS: Open http://localhost:55447 in your browser
+   - Windows: Open http://localhost:55914 in your browser
 2. **Explore the API**: Visit http://localhost:51183/docs for interactive API documentation
 3. **Start Monitoring**: Use the frontend or API to begin monitoring the Federal Reserve websites
 4. **View Results**: Check the dashboard for analysis results and misrepresentation detection
+
+## 🖥️ Platform-Specific Instructions
+
+### Windows Users
+- Use `npm run startw` to start the frontend (runs on port 55914)
+- Use `set PORT=51183 && python main.py` to start the backend
+- Access frontend at http://localhost:55914
+
+### Linux/macOS Users  
+- Use `npm start` to start the frontend (runs on port 55447)
+- Use `PORT=51183 python3 main.py` to start the backend
+- Access frontend at http://localhost:55447
 
 The system is now ready to monitor how LLM services represent the Federal Reserve Bank websites!
 
